@@ -1,5 +1,4 @@
-// Replace this after deploying the Render service.
-const API_BASE_URL = "https://YOUR-RENDER-SERVICE.onrender.com";
+const API_BASE_URL = "https://chatbotbeta.onrender.com";
 
 const form = document.querySelector("#chat-form");
 const input = document.querySelector("#question");
