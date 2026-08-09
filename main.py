@@ -7,22 +7,46 @@ import sqlite3
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from sentence_transformers import SentenceTransformer, util
 
 
 DB_KO = "qa_ko.db"
 DB_EN = "qa_en.db"
 
 
-# Do not make a local chatbot unusable when the embedding model was not
-# downloaded yet. A lexical fallback remains available offline.
-try:
-    model = SentenceTransformer(
-        "paraphrase-multilingual-MiniLM-L12-v2",
-        local_files_only=True,
-    )
-except Exception:
-    model = None
+# The free Render instance has 512 MiB of memory. Use multilingual-e5-small
+# (80MB) with optional ONNX optimization for ~30% additional memory savings.
+model = None
+util = None
+ENABLE_EMBEDDINGS = os.getenv("ENABLE_EMBEDDINGS", "false").lower() == "true"
+USE_ONNX = os.getenv("USE_ONNX", "true").lower() == "true"
+
+if ENABLE_EMBEDDINGS:
+    try:
+        from sentence_transformers import SentenceTransformer, util
+
+        model_name = "multilingual-e5-small"
+        if USE_ONNX:
+            try:
+                from optimum.onnxruntime import ORTModelForSentenceTransformers
+                from transformers import AutoTokenizer
+
+                model = ORTModelForSentenceTransformers.from_pretrained(
+                    model_name,
+                    local_files_only=False,
+                )
+            except Exception:
+                model = SentenceTransformer(
+                    model_name,
+                    local_files_only=False,
+                )
+        else:
+            model = SentenceTransformer(
+                model_name,
+                local_files_only=False,
+            )
+    except Exception as e:
+        model = None
+        print(f"Embedding model failed to load: {e}")
 
 
 # Embeddings are expensive to calculate. Keep them per open database and
@@ -468,6 +492,9 @@ def health():
     return {
         "status": "ok",
         "embedding_model": model is not None,
+        "search_mode": "semantic" if model else "keyword",
+        "model_name": "multilingual-e5-small" if model else None,
+        "onnx_optimized": USE_ONNX if model else None,
     }
 
 

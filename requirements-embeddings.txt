@@ -1,0 +1,6 @@
+# Lightweight embeddings for 512 MiB environments. multilingual-e5-small is 80MB.
+# For additional 30% memory savings on compatible hardware, uncomment optimum line.
+-r requirements.txt
+sentence-transformers>=3.0,<6.0
+torch>=2.0
+# optimum[onnxruntime]>=1.17  # Optional: ONNX optimizations for memory efficiency

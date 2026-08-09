@@ -14,3 +14,10 @@
 ## Database
 
 The bundled SQLite files provide initial data. Render's default filesystem is temporary, so answers saved through `/teach` disappear after a restart or redeploy unless you attach a persistent disk or move to Postgres.
+
+## Render free-instance mode
+
+Render's free instance runs the lightweight SQLite keyword search by default.
+Do not add PyTorch or `sentence-transformers` to `requirements.txt`. On a
+larger server, install `requirements-embeddings.txt` and set
+`ENABLE_EMBEDDINGS=true` to activate semantic search.
