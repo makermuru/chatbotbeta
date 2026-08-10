@@ -24,7 +24,7 @@ if ENABLE_EMBEDDINGS:
     try:
         from sentence_transformers import SentenceTransformer, util
 
-        model_name = "BM-K/KoSimCSE-distilroberta"
+        model_name = "jhgan/ko-sroberta-multitask"
         if USE_ONNX:
             try:
                 from optimum.onnxruntime import ORTModelForSentenceTransformers
