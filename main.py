@@ -24,7 +24,7 @@ if ENABLE_EMBEDDINGS:
     try:
         from sentence_transformers import SentenceTransformer, util
 
-        model_name = "paraphrase-multilingual-MiniLM-L12-v2"
+        model_name = "BM-K/KoSimCSE-distilroberta"
         if USE_ONNX:
             try:
                 from optimum.onnxruntime import ORTModelForSentenceTransformers
